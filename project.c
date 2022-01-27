@@ -28,7 +28,12 @@ header createNode()
 
 int isEmpty(header L)
 {
-    return (L->rptr == NULL);
+    if(L->rptr==NULL) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 
@@ -279,19 +284,21 @@ int count_slots(char name[100],node L)
 	}
 }
 
-void findpos(node L , char na[100])
+
+void findpos(header L)
 {
 int i=0;
 int flag;
-if(!isEmpty(L))
+if(!isEmpty(L->rptr))
 {
 temp=L->rptr;
-
 printf("\nenter the name u want to find date :");
-scanf("%s",&name);
+char na[100];
+scanf("%s",na);
+
 while(temp!=NULL)
 {
-if(strcmp(temp->cust_name , na))
+if(strcmp(temp->cust_name , na)==0)
 {
 printf("Date for the booked slot on:%d",i+1);
 flag=0;
@@ -302,7 +309,7 @@ else
 flag=1;
 }
 i++;
-ptr=ptr->next;
+temp=temp->rptr;
 }
 if(flag==1)
 {
@@ -310,7 +317,7 @@ printf("\n date not found\n");
 }
 }
 }
-}
+
 
 
 void add_slot(int X , node L)
@@ -318,18 +325,50 @@ void add_slot(int X , node L)
 int i=0;
 if(!isEmpty(L))
 {
-temp=l->rptr;
+temp=L->rptr;
 while(temp != NULL)
 {
 if(temp->date==X)
+ {
+               { 
+                   if(strcmp(temp->status,"Booked"))
+                    {
+                        printf("Slot already filled");
+                          break;
+                    }
+                }
+
 {
 printf("\nenter your name :");
-scanf("%s",cust_name);
+scanf("%s",temp->cust_name);
+getchar();//comment
+strcpy(temp->status,"Booked");
+break;
+}
+temp = temp->rptr;
 }
 }
 }
+void dispose(header L)
+{
+    if(isEmpty(L))
+    {
+        printf("List is already empty\n");
+    }
+    else
+    {
+        temp = L->rptr;
+        while(temp != NULL)
+        {
+            prev = temp;
+            strcpy(prev->status ,"Empty");
+            temp = temp->rptr;
+            //free(prev);
+        }
+        //L->rptr = NULL;
+    }
+    
 }
-
 int main()
 {
     int x,choice,i;
@@ -347,45 +386,60 @@ int main()
     printf("\n3.add booking slot ");
     printf("\n4.Remove Booking Slot");
     printf("\n5.Count the no. of slots booked by a person");
-    printf("\n6.Exit");
+    printf("\n6.dispose");
+    printf("\n7.Exit");
     printf("\nEnter your choice=");
     scanf("%d",&choice);
+    getchar();//comment
     switch(choice)
     {
-
        case 1:
-	{
+       {
 		display(L);
 		break;
-	}
+       }
        case 2:
-         {
-          findpos(L,na);
+       {
+          //findpos(L,name);
+          findpos(L);
           break;
-         }
-
+       }
+        case 3:
+        {
+             printf("\nEnter the date:");
+             scanf("%d", &x);
+             getchar();//comment
+             add_slot(x, L);
+             break;
+        }
        case 4:
-	{
+       {
 		printf("\nEnter the date=");
 		scanf("%d",&x);
 		remove_slot(x,L);
 		break;
-	}
+       }
        case 5:
-	{
+       {
 		printf("\nEnter the customer name=");
 		scanf("%s",name);
 		i=count_slots(name,L);
 		printf("\nNo. of slots booked by the customer=%d",i);
 		break;
-	}
+       }
+       case 6:
+       {
+          dispose(L);
+           break;
+       }
     }
 
-    }while(choice!=6);
-
+    }while(choice!=7);
+     deleteList(L);
  
-    deleteList(L);
+    
  
     return 0;
 }
+
 
